@@ -1,0 +1,22 @@
+apiVersion: v2
+name: webapp
+description: Een kleine webapp als oefenchart, uit de Helm-serie op blog.stoiq.io
+type: application
+version: 1.1.0
+appVersion: "6.17.0"
+home: https://blog.stoiq.io/posts/helm-create-chart/
+sources:
+  - https://github.com/substoiq/helm-webapp
+  - https://github.com/stefanprodan/podinfo
+maintainers:
+  - name: substoiq
+    url: https://github.com/substoiq
+keywords:
+  - podinfo
+  - voorbeeld
+  - helm-serie
+dependencies:
+  - name: valkey
+    version: "1.0.x"
+    repository: https://valkey.io/valkey-helm/
+    condition: valkey.enabled

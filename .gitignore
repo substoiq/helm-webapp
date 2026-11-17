@@ -1,0 +1,4 @@
+dist/
+charts/*/charts/*.tgz
+*.prov
+.DS_Store

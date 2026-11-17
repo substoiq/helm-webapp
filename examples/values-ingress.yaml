@@ -1,0 +1,9 @@
+# Voorbeeld met een Ingress. Pas className en de hostnamen aan op je cluster.
+ingress:
+  enabled: true
+  className: traefik
+  hosts:
+    - host: webapp.example.com
+      paths: ["/"]
+    - host: www.webapp.example.com
+      paths: ["/", "/api"]

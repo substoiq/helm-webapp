@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "webapp.fullname" . }}
+  labels:
+    {{- include "webapp.labels" . | nindent 4 }}
+data:
+  PODINFO_UI_MESSAGE: {{ tpl .Values.ui.message . | quote }}
+  PODINFO_UI_COLOR: {{ .Values.ui.color | quote }}
+  {{- if .Values.valkey.enabled }}
+  PODINFO_CACHE_SERVER: {{ printf "tcp://%s-valkey:6379" .Release.Name | quote }}
+  {{- end }}
+  {{- range $name, $value := .Values.extraEnv }}
+  {{ $name }}: {{ $value | quote }}
+  {{- end }}

@@ -1,0 +1,77 @@
+name: Chart
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+    tags: ["webapp-v*"]
+
+permissions:
+  contents: read
+
+env:
+  CHART: charts/webapp
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: azure/setup-helm@v5
+        with:
+          version: v4.3.1
+
+      - name: Afhankelijkheden ophalen
+        run: helm dependency build "$CHART"
+
+      - name: Lint
+        run: |
+          helm lint --strict "$CHART"
+          helm lint --strict "$CHART" -f examples/values-prod.yaml -f examples/values-ingress.yaml
+
+      - name: Unit tests
+        run: |
+          helm plugin install https://github.com/helm-unittest/helm-unittest.git --verify=false
+          helm unittest "$CHART"
+
+      - name: Testcluster
+        uses: helm/kind-action@v1
+
+      - name: Installeren en testen
+        run: |
+          helm install demo "$CHART" -n ci --create-namespace --wait --timeout 3m
+          helm test demo -n ci --logs
+
+  publish:
+    needs: test
+    if: startsWith(github.ref, 'refs/tags/webapp-v')
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+      id-token: write
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: azure/setup-helm@v5
+        with:
+          version: v4.3.1
+
+      - uses: sigstore/cosign-installer@v4.1.3
+
+      - name: Inpakken
+        run: |
+          helm dependency build "$CHART"
+          helm package "$CHART" -d dist
+
+      - name: Pushen en ondertekenen
+        env:
+          TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          OWNER: ${{ github.repository_owner }}
+        run: |
+          echo "$TOKEN" | helm registry login ghcr.io -u "$GITHUB_ACTOR" --password-stdin
+          echo "$TOKEN" | cosign login ghcr.io -u "$GITHUB_ACTOR" --password-stdin
+          helm push dist/webapp-*.tgz "oci://ghcr.io/$OWNER/charts" 2>&1 | tee push.log
+          DIGEST=$(awk '/^Digest:/ {print $2}' push.log)
+          cosign sign --yes "ghcr.io/$OWNER/charts/webapp@$DIGEST"

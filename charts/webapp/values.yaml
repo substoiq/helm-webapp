@@ -1,0 +1,51 @@
+replicaCount: 1
+
+image:
+  repository: ghcr.io/stefanprodan/podinfo
+  tag: ""                 # leeg = appVersion uit Chart.yaml
+  pullPolicy: IfNotPresent
+
+service:
+  port: 80
+
+ui:
+  message: "Hallo vanuit Helm"
+  color: "#34577c"
+
+resources:
+  requests:
+    cpu: 50m
+    memory: 64Mi
+  limits:
+    memory: 128Mi
+
+extraEnv: {}
+#  PODINFO_LEVEL: debug
+
+nodeSelector: {}
+
+ingress:
+  enabled: false
+  className: ""
+  hosts: []
+#   - host: webapp.example.com
+#     paths: ["/"]
+
+nameOverride: ""
+fullnameOverride: ""
+
+valkey:
+  enabled: false
+  auth:
+    enabled: false
+  persistence:
+    enabled: false
+
+migration:
+  enabled: true
+
+secret:
+  # Bestaand Secret gebruiken in plaats van er een te laten maken
+  existingSecret: ""
+  # Leeg = de chart maakt een willekeurig token en bewaart het
+  apiToken: ""

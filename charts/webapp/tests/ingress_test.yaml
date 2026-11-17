@@ -1,0 +1,24 @@
+suite: ingress
+templates:
+  - templates/ingress.yaml
+release:
+  name: demo
+tests:
+  - it: maakt geen Ingress als hij uit staat
+    asserts:
+      - hasDocuments:
+          count: 0
+
+  - it: maakt een regel per host
+    set:
+      ingress.enabled: true
+      ingress.hosts:
+        - host: a.example.com
+          paths: ["/"]
+    asserts:
+      - equal:
+          path: spec.rules[0].host
+          value: a.example.com
+      - equal:
+          path: spec.rules[0].http.paths[0].backend.service.name
+          value: demo-webapp

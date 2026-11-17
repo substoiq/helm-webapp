@@ -1,0 +1,23 @@
+# Voorbeeld voor Helmfile: Valkey als eigen release, webapp erna.
+repositories:
+  - name: valkey
+    url: https://valkey.io/valkey-helm/
+
+releases:
+  - name: valkey
+    namespace: prod
+    chart: valkey/valkey
+    version: 1.0.0
+
+  - name: webapp
+    namespace: prod
+    chart: oci://ghcr.io/substoiq/charts/webapp
+    version: 1.1.0
+    needs:
+      - prod/valkey
+    values:
+      - values-prod.yaml
+      - valkey:
+          enabled: false
+      - extraEnv:
+          PODINFO_CACHE_SERVER: tcp://valkey:6379

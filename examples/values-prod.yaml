@@ -1,0 +1,16 @@
+# Voorbeeld voor productie: alleen wat afwijkt van de standaard.
+replicaCount: 3
+
+ui:
+  message: "Productie: {{ .Release.Name }} in {{ .Release.Namespace }}"
+  color: "#2e7d32"
+
+resources:
+  requests:
+    cpu: 100m
+    memory: 64Mi
+  limits:
+    memory: 256Mi
+
+valkey:
+  enabled: true

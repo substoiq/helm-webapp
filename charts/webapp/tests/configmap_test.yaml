@@ -1,0 +1,22 @@
+suite: configmap
+templates:
+  - templates/configmap.yaml
+release:
+  name: demo
+tests:
+  - it: zet het adres van Valkey als de cache aan staat
+    set:
+      valkey.enabled: true
+    asserts:
+      - equal:
+          path: data.PODINFO_CACHE_SERVER
+          value: tcp://demo-valkey:6379
+
+  - it: neemt extraEnv over
+    set:
+      extraEnv:
+        PODINFO_LEVEL: debug
+    asserts:
+      - equal:
+          path: data.PODINFO_LEVEL
+          value: debug

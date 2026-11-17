@@ -1,0 +1,14 @@
+# Bestanden die niet in het pakket horen
+.DS_Store
+.git/
+.gitignore
+*.swp
+*.bak
+*.tmp
+*.orig
+*~
+.idea/
+.vscode/
+# Unit tests van helm-unittest. Let op de slash vooraan:
+# zonder die slash verdwijnt ook templates/tests/ uit het pakket.
+/tests/

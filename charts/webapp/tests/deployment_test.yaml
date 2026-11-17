@@ -1,0 +1,36 @@
+suite: deployment
+templates:
+  - templates/deployment.yaml
+  - templates/configmap.yaml
+release:
+  name: demo
+tests:
+  - it: gebruikt appVersion als standaard-tag
+    template: templates/deployment.yaml
+    asserts:
+      - equal:
+          path: spec.template.spec.containers[0].image
+          value: ghcr.io/stefanprodan/podinfo:6.17.0
+
+  - it: neemt een eigen tag over
+    template: templates/deployment.yaml
+    set:
+      image.tag: "6.16.0"
+    asserts:
+      - equal:
+          path: spec.template.spec.containers[0].image
+          value: ghcr.io/stefanprodan/podinfo:6.16.0
+
+  - it: laat resources weg als ze leeg zijn
+    template: templates/deployment.yaml
+    set:
+      resources: null
+    asserts:
+      - notExists:
+          path: spec.template.spec.containers[0].resources
+
+  - it: heeft een checksum van de ConfigMap
+    template: templates/deployment.yaml
+    asserts:
+      - exists:
+          path: spec.template.metadata.annotations["checksum/config"]

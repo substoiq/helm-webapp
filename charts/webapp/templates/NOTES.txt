@@ -1,0 +1,7 @@
+{{ .Chart.Name }} {{ .Chart.AppVersion }} staat klaar als release "{{ .Release.Name }}" in namespace {{ .Release.Namespace }}.
+
+Bekijk de app in je browser:
+
+  kubectl -n {{ .Release.Namespace }} port-forward svc/{{ include "webapp.fullname" . }} 8080:{{ .Values.service.port }}
+
+en open http://localhost:8080
