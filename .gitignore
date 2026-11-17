@@ -2,3 +2,7 @@ dist/
 charts/*/charts/*.tgz
 *.prov
 .DS_Store
+
+# Niet in de repo
+CLAUDE.*
+.claude/
