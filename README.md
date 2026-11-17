@@ -38,6 +38,7 @@ helm-webapp/
 ```bash
 git clone https://github.com/substoiq/helm-webapp.git
 cd helm-webapp
+helm repo add valkey https://valkey.io/valkey-helm/
 helm dependency build charts/webapp
 helm install demo charts/webapp -n lab --create-namespace --wait
 kubectl -n lab port-forward svc/demo-webapp 8080:80
@@ -125,6 +126,7 @@ De workflow in `.github/workflows/chart.yaml` test de chart bij elke pull reques
 The example chart from the [Helm series on blog.stoiq.io](https://blog.stoiq.io/en/categories/helm/). It packages [podinfo](https://github.com/stefanprodan/podinfo) and shows values, templates, named templates, a JSON schema, tests, a hook, a dependency (Valkey) and configuration with secrets.
 
 ```bash
+helm repo add valkey https://valkey.io/valkey-helm/
 helm dependency build charts/webapp
 helm install demo charts/webapp -n lab --create-namespace --wait
 helm test demo -n lab --logs

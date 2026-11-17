@@ -23,7 +23,9 @@ jobs:
           version: v4.3.1
 
       - name: Afhankelijkheden ophalen
-        run: helm dependency build "$CHART"
+        run: |
+          helm repo add valkey https://valkey.io/valkey-helm/
+          helm dependency build "$CHART"
 
       - name: Lint
         run: |
@@ -62,6 +64,7 @@ jobs:
 
       - name: Inpakken
         run: |
+          helm repo add valkey https://valkey.io/valkey-helm/
           helm dependency build "$CHART"
           helm package "$CHART" -d dist
 
